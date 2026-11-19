@@ -35,7 +35,8 @@ _Last updated: 2026-11-19 (end of Phase 1 implementation, pending owner gate)_
 - ✅ 1.12 Test harness (Vitest + Playwright config + sample RBAC/validation/security/component/public-page tests)
 - **Verification:** `npx tsc --noEmit`, `npx eslint .`, `npm run build` clean; `npm test` 4 files / 16 tests passing; `npm run test:e2e` 4 tests passing on both `chromium` and `mobile` (8 runs), configured and unconfigured
 - **Live DB:** ✅ Supabase project `hsdaclpcjpdmgrqmpspn` linked via pooler (`eu-west-1`); migrations `0001`–`0004` applied; seed intentionally not applied (dev-only); REST verified `200 []` with RLS
-- **Exit gate:** build passes ✅; auth/RBAC unit + E2E verified ✅; multi-role RLS tests with real accounts ⛔ (test accounts not yet created); owner review ⏳
+- **Admin account:** ✅ `admin@hive.app` created with `administrator` role; password generated locally and delivered to owner only (never stored in repo/env/docs); direct Auth API login + authenticated RLS read + full browser UI login → `/admin/dashboard` all verified
+- **Exit gate:** build passes ✅; auth/RBAC unit + E2E verified ✅; single-role live RLS verified ✅; cross-class multi-role RLS matrix ⛔ (student/rep test accounts not requested); owner review ⏳
 
 ## Phases 2–7 ⬜ NOT STARTED
 - ⬜ Phase 2 — Core academic platform (student screens, docs, timetable, assignments, opportunities, discussions, notifications)
