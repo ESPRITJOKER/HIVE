@@ -66,5 +66,8 @@ Read exclusively through `src/lib/env.server.ts` and only from server contexts. 
 
 ## 5. Current state (Phase 1)
 
-- `.env.example` exists with names only; no `.env.local` or real credentials are present in this workspace.
-- live auth/DB, AI, and push remain unconfigured by design (decision A2); the relevant code paths are written but not yet exercised against a live project.
+- `.env.example` exists with names only. A local `.env.local` is configured with the project URL and a Supabase **publishable key** (`sb_publishable_…`), which is client-safe and is used for `NEXT_PUBLIC_SUPABASE_ANON_KEY`. The file is git-ignored.
+- The same public values are set as Vercel project environment variables for production/preview/development.
+- `SUPABASE_SERVICE_ROLE_KEY` (or a `sb_secret_…` key) has not been supplied, so `getServerEnv()` stays `null` and the privileged/admin client remains unavailable. This is expected and safe.
+- AI provider keys and VAPID keys remain unset (features are Phase 4/5).
+- The database password is used only for migration commands and is never stored in any file.

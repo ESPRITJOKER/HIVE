@@ -8,7 +8,7 @@ This document records the **current implementation status** of the controls desi
 
 | Layer | Implemented in | Status |
 |---|---|---|
-| Database (primary) | `supabase/migrations/0002_rls_policies.sql`, `0003_triggers_and_functions.sql` | ✅ Written: RLS on all sensitive tables, class/role-scoped policies, role-self-change guard, append-only audit trigger. ⛔ Not yet applied to a live DB or exercised with multi-role tests. |
+| Database (primary) | `supabase/migrations/0002_rls_policies.sql`, `0003_triggers_and_functions.sql`, `0004_role_grants.sql` | ✅ Written and applied to the live project: RLS on all sensitive tables, 40 `authenticated`-scoped policies, role-self-change guard, append-only audit trigger, explicit API-role grants. ⛔ Not yet exercised with multi-role test accounts. |
 | Server (secondary) | `src/proxy.ts`, `src/lib/supabase/server.ts`, `src/lib/permissions/*`, `src/lib/validations/*` | ✅ Session refresh + route protection; role resolved from the `users` table (not client claims); Zod validation; consistent API responses. |
 | Client (UX only) | `src/components/layout/*`, role dashboards | ✅ Role-based nav and dashboards; roadmap controls disabled with "Soon" labels. Explicitly **not** a security boundary. |
 
@@ -18,6 +18,7 @@ This document records the **current implementation status** of the controls desi
 
 - **Privileged keys are server-only.** `src/lib/env.ts` exposes only `NEXT_PUBLIC_*` values; `env.server.ts` is documented server-only and validates with Zod. `.env.example` is names-only; no secrets are committed.
 - **No mock backend.** `getBrowserSupabase()` / `getServerSupabase()` return `null` when unconfigured and the UI shows a configuration notice; dashboards never fabricate data.
+- **Live Supabase connected.** Public URL + publishable key are configured locally and on Vercel; anonymous REST reads return `200 []`, confirming RLS blocks rows for unauthenticated callers. The DB password is command-only and never stored; no service-role secret has been supplied.
 - **Role separation.** `tests/unit/permissions.test.ts` asserts students and representatives are denied all admin permissions, students cannot upload/publish/manage/moderate, representatives cannot manage users, and null roles deny everything. Roles are not hierarchical for admin powers.
 - **Route protection.** `src/proxy.ts` redirects unauthenticated users from `/student`, `/representative`, `/admin` areas; mismatched roles are redirected to their own home path; unconfigured backend redirects to `/login?reason=not_configured` (covered by Playwright).
 - **Role self-change blocked at DB.** `prevent_role_self_change()` trigger in migration 0003.

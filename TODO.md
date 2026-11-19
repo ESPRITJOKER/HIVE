@@ -33,8 +33,9 @@ _Last updated: 2026-11-19 (end of Phase 1 implementation, pending owner gate)_
 - ✅ 1.10 Initial RLS policies + role/permission tables + append-only audit trigger + helper functions
 - ✅ 1.11 Core docs: `README.md`, `ENVIRONMENT.md`, `DATABASE.md`, `SECURITY.md`, `TESTING.md`; `SECURITY_REVIEW.md` status updated
 - ✅ 1.12 Test harness (Vitest + Playwright config + sample RBAC/validation/security/component/public-page tests)
-- **Verification:** `npx tsc --noEmit`, `npx eslint .`, `npm run build` clean; `npm test` 4 files / 16 tests passing; `npm run test:e2e` 4 tests passing on both `chromium` and `mobile`
-- **Exit gate:** ⛔ build passes ✅; auth/RBAC/RLS verified ⛔ (needs live Supabase credentials + multi-role tests — decision A2); owner review ⏳
+- **Verification:** `npx tsc --noEmit`, `npx eslint .`, `npm run build` clean; `npm test` 4 files / 16 tests passing; `npm run test:e2e` 4 tests passing on both `chromium` and `mobile` (8 runs), configured and unconfigured
+- **Live DB:** ✅ Supabase project `hsdaclpcjpdmgrqmpspn` linked via pooler (`eu-west-1`); migrations `0001`–`0004` applied; seed intentionally not applied (dev-only); REST verified `200 []` with RLS
+- **Exit gate:** build passes ✅; auth/RBAC unit + E2E verified ✅; multi-role RLS tests with real accounts ⛔ (test accounts not yet created); owner review ⏳
 
 ## Phases 2–7 ⬜ NOT STARTED
 - ⬜ Phase 2 — Core academic platform (student screens, docs, timetable, assignments, opportunities, discussions, notifications)

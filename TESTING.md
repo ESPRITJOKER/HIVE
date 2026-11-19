@@ -43,7 +43,7 @@ The Playwright config starts `npm run dev -- --hostname 127.0.0.1` automatically
 - Protected dashboard redirects unauthenticated visitors to `/login?reason=not_configured`.
 - Mobile viewport keeps the primary call to action visible.
 
-**Result at Phase 1 check:** 4 tests passing on both `chromium` and `mobile` projects (8 total runs).
+**Result at Phase 1 check:** 4 tests passing on both `chromium` and `mobile` projects (8 total runs), both with and without a configured Supabase backend. The protected-route test accepts either `reason=auth_required` (configured) or `reason=not_configured` (unconfigured).
 
 ---
 

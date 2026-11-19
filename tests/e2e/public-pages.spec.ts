@@ -17,7 +17,9 @@ test("login page renders accessible form fields", async ({ page }) => {
 
 test("protected dashboard redirects unauthenticated users to sign in", async ({ page }) => {
   await page.goto("/student/dashboard");
-  await expect(page).toHaveURL(/\/login\?reason=not_configured/);
+  // Unconfigured backends report `not_configured`; a configured backend reports
+  // `auth_required`. Both must land the visitor on the login page with a reason.
+  await expect(page).toHaveURL(/\/login\?reason=(not_configured|auth_required)/);
 });
 
 test("mobile viewport keeps the primary call to action visible", async ({ page }) => {
