@@ -33,7 +33,7 @@ _Last updated: 2026-11-19 (end of Phase 1 implementation, pending owner gate)_
 - ✅ 1.10 Initial RLS policies + role/permission tables + append-only audit trigger + helper functions
 - ✅ 1.11 Core docs: `README.md`, `ENVIRONMENT.md`, `DATABASE.md`, `SECURITY.md`, `TESTING.md`; `SECURITY_REVIEW.md` status updated
 - ✅ 1.12 Test harness (Vitest + Playwright config + sample RBAC/validation/security/component/public-page tests)
-- **Verification:** `npx tsc --noEmit`, `npx eslint .`, `npm run build` clean; `npm test` 4 files / 16 tests passing
+- **Verification:** `npx tsc --noEmit`, `npx eslint .`, `npm run build` clean; `npm test` 4 files / 16 tests passing; `npm run test:e2e` 4 tests passing on both `chromium` and `mobile`
 - **Exit gate:** ⛔ build passes ✅; auth/RBAC/RLS verified ⛔ (needs live Supabase credentials + multi-role tests — decision A2); owner review ⏳
 
 ## Phases 2–7 ⬜ NOT STARTED
@@ -53,7 +53,7 @@ _Last updated: 2026-11-19 (end of Phase 1 implementation, pending owner gate)_
 - Attached specification PDF could not be read; pasted spec text used as source of truth.
 - No Supabase project/keys/VAPID/AI keys supplied — live integration, RLS tests, Playwright browser install in progress, and PWA/AI features deferred.
 - `src/lib/supabase/database.types.ts` is hand-authored; generate types from the live schema in a later phase to avoid drift.
-- E2E suite requires `npx playwright install chromium` on this machine (download in progress at time of writing).
+- E2E suite requires `npx playwright install chromium` once per machine (installed and verified here).
 
 ## Preservation note
 Do **not** modify or delete: `HIVE_design_phase_1/01-brand-and-authentication.png`,
