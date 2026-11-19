@@ -23,7 +23,7 @@ _Last updated: 2026-11-19 (end of Phase 1 implementation, pending owner gate)_
 ## Phase 1 — Foundation ✅ IMPLEMENTED (awaiting owner gate)
 - ✅ 1.1 Record owner confirmations
 - ✅ 1.2 Scaffold Next.js 16 + TS 5.9 + Tailwind 4 + ESLint 10 + Prettier (compatible stable versions); conventions/configs in place
-- ⬜ 1.3 Git init + baseline commit — to be completed now (all work currently uncommitted)
+- ✅ 1.3 Git init + `.gitignore` + conventions; baseline commit `abbc77a` (108 files, secret scan clean)
 - ✅ 1.4 Design tokens, dark/light theme, Manrope/Inter fonts, global styles
 - ✅ 1.5 Shared UI kit (button, input, card, dialog, dropdown, select, tabs, badge, states, pagination, toaster, skeletons, spinners, form fields)
 - ✅ 1.6 Supabase clients + validated env + `.env.example` (names only); privileged keys server-only; explicit "not configured" state
