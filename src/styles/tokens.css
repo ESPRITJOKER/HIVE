@@ -1,0 +1,75 @@
+/**
+ * HIVE design tokens.
+ * Dark is the default theme; [data-theme="light"] overrides it.
+ * Values are defined once here and consumed through @theme inline in globals.css.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Brand */
+  --brand-primary: #7028f5;
+  --brand-secondary: #a855f7;
+  --brand-accent: #f5b942;
+
+  /* Surfaces */
+  --background: #080817;
+  --surface: #17162b;
+  --surface-raised: #1e1c36;
+  --surface-overlay: rgba(23, 22, 43, 0.85);
+  --border: #373052;
+  --border-subtle: rgba(55, 48, 82, 0.55);
+
+  /* Text */
+  --text: #ffffff;
+  --muted: #a6a1bc;
+
+  /* Status */
+  --success: #22c58b;
+  --warning: #f5b942;
+  --danger: #f16b78;
+  --info: #60a5fa;
+
+  /* Glass */
+  --glass-bg: rgba(23, 22, 43, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
+  --ambient-violet: rgba(112, 40, 245, 0.16);
+
+  /* Shadows & radius */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.45);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+
+  /* Layout */
+  --sidebar-width: 16.5rem;
+  --topbar-height: 4rem;
+  --bottom-nav-height: 4.25rem;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --background: #f5f4fa;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-overlay: rgba(255, 255, 255, 0.92);
+  --border: #d9d5e8;
+  --border-subtle: rgba(112, 40, 245, 0.12);
+
+  --text: #17162b;
+  --muted: #6b6683;
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(112, 40, 245, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.6);
+  --ambient-violet: rgba(112, 40, 245, 0.08);
+
+  --shadow-sm: 0 2px 8px rgba(23, 22, 43, 0.06);
+  --shadow-md: 0 12px 32px rgba(23, 22, 43, 0.1);
+  --shadow-lg: 0 24px 64px rgba(23, 22, 43, 0.14);
+}
