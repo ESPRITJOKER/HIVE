@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap } from "lucide-react";
-import { APP_NAME } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { NAVIGATION } from "./navigation";
 import type { Role } from "@/types/domain";
 
@@ -13,11 +12,8 @@ export function Sidebar({ role }: { role: Role }) {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-[var(--sidebar-width)] flex-col border-r border-border/60 bg-surface/60 backdrop-blur-xl lg:flex">
-      <div className="flex h-[var(--topbar-height)] items-center gap-2.5 border-b border-border/60 px-5">
-        <div className="grid size-8 place-items-center rounded-lg bg-primary text-white">
-          <GraduationCap className="size-4" aria-hidden="true" />
-        </div>
-        <span className="font-heading text-lg font-extrabold tracking-tight">{APP_NAME}</span>
+      <div className="flex h-[var(--topbar-height)] items-center border-b border-border/60 px-5">
+        <BrandLogo size="sm" withWordmark />
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5" aria-label="Sidebar">

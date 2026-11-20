@@ -2,9 +2,19 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap } from "lucide-react";
-import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
+import dynamic from "next/dynamic";
 import { resolveLandingRoute } from "@/features/authentication/services/auth-service";
+import { BrandLogoSkeleton } from "@/components/shared/brand-logo-skeleton";
+
+// Lazy-load the animated brand mark: the lightweight shimmer skeleton paints
+// immediately, then the logo chunk swaps in with its reveal animation.
+const BrandLogo = dynamic(
+  () => import("@/components/shared/brand-logo").then((m) => m.BrandLogo),
+  {
+    ssr: false,
+    loading: () => <BrandLogoSkeleton size="xl" tagline />,
+  },
+);
 
 export default function SplashPage() {
   const router = useRouter();
@@ -20,14 +30,11 @@ export default function SplashPage() {
   }, [router]);
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-5 text-center">
-      <div className="grid size-20 place-items-center rounded-2xl bg-primary text-white shadow-lg">
-        <GraduationCap className="size-10" aria-hidden="true" />
+    <div className="relative flex min-h-dvh flex-col items-center justify-center gap-7 overflow-hidden text-center">
+      <div className="animate-float">
+        <BrandLogo size="xl" tagline gradientWordmark className="flex-col gap-4" />
       </div>
-      <div>
-        <h1 className="font-heading text-3xl font-extrabold tracking-tight">{APP_NAME}</h1>
-        <p className="mt-1 text-sm text-muted">{APP_TAGLINE}</p>
-      </div>
+
       <div className="h-1 w-24 overflow-hidden rounded-full bg-border">
         <div className="h-full w-1/2 animate-pulse rounded-full bg-primary" />
       </div>

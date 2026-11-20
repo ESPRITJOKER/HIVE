@@ -137,6 +137,166 @@
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * Motion system
+ * Reusable keyframes + utilities so every HIVE screen shares the same feel.
+ * All of it is disabled under prefers-reduced-motion (see the block below).
+ * ------------------------------------------------------------------------- */
+
+@keyframes hive-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hive-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* The logo "pops" into place once its chunk has loaded. */
+@keyframes hive-logo-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) rotate(-10deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Expanding halo behind the logo tile as it appears. */
+@keyframes hive-ring {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+/* Light sweep across the logo tile / glass surfaces. */
+@keyframes hive-sheen {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(240%) skewX(-18deg);
+  }
+}
+
+@keyframes hive-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes hive-gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@layer utilities {
+  /* One-shot entrance — good for above-the-fold content. */
+  .animate-fade-up {
+    animation: hive-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-logo-in {
+    animation: hive-logo-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .animate-float {
+    animation: hive-float 6s ease-in-out infinite;
+  }
+
+  /* Scroll reveal — paired with the <Reveal> client wrapper, which toggles
+     `.is-visible` via IntersectionObserver. Start hidden, settle on view. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Gentle lift + glow on hover for interactive cards. */
+  .card-interactive {
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .card-interactive:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--brand-secondary);
+  }
+
+  /* Shimmer skeleton — used while a chunk/asset (e.g. the logo) is loading. */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--glass-highlight),
+      transparent
+    );
+    animation: hive-shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* Animated version of the brand gradient text. */
+  .text-gradient-animated {
+    background: linear-gradient(
+      100deg,
+      var(--brand-primary),
+      var(--brand-secondary) 55%,
+      var(--brand-accent)
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: hive-gradient-pan 5s linear infinite;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -145,5 +305,11 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Never trap reveal content in its hidden start state. */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

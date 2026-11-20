@@ -9,6 +9,7 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { getStudentDashboardData } from "@/features/dashboard/services/student-dashboard-service";
 import { formatDateTime } from "@/features/shared/format";
 import { PageHeader } from "@/components/shared/page-header";
+import { Reveal } from "@/components/shared/reveal";
 
 export default async function StudentDashboardPage() {
   const session = await requireRole(["student"]);
@@ -48,7 +49,8 @@ export default async function StudentDashboardPage() {
           />
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <Card className="glass">
+            <Reveal>
+            <Card className="glass card-interactive h-full">
               <CardHeader className="flex flex-row items-start justify-between gap-2">
                 <div>
                   <CardTitle>Upcoming deadlines</CardTitle>
@@ -81,8 +83,10 @@ export default async function StudentDashboardPage() {
                 )}
               </CardContent>
             </Card>
+            </Reveal>
 
-            <Card className="glass">
+            <Reveal delay={90}>
+            <Card className="glass card-interactive h-full">
               <CardHeader className="flex flex-row items-start justify-between gap-2">
                 <div>
                   <CardTitle>Recent documents</CardTitle>
@@ -117,10 +121,12 @@ export default async function StudentDashboardPage() {
                 )}
               </CardContent>
             </Card>
+            </Reveal>
           </div>
 
           {data.opportunities.length > 0 ? (
-            <Card className="glass">
+            <Reveal>
+            <Card className="glass card-interactive">
               <CardHeader className="flex flex-row items-start justify-between gap-2">
                 <div>
                   <CardTitle className="flex items-center gap-2">
@@ -151,6 +157,7 @@ export default async function StudentDashboardPage() {
                 </ul>
               </CardContent>
             </Card>
+            </Reveal>
           ) : null}
         </>
       ) : null}
