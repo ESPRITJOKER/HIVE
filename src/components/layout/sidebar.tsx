@@ -1,11 +1,20 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
+import { LoaderCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { NAVIGATION } from "./navigation";
 import type { Role } from "@/types/domain";
+
+/** Shows a spinner on the nav item being navigated to, for instant click feedback. */
+function NavPending() {
+  const { pending } = useLinkStatus();
+  return pending ? (
+    <LoaderCircle className="ml-auto size-3.5 shrink-0 animate-spin" aria-hidden="true" />
+  ) : null;
+}
 
 export function Sidebar({ role }: { role: Role }) {
   const pathname = usePathname();
@@ -50,6 +59,7 @@ export function Sidebar({ role }: { role: Role }) {
                         )}
                       >
                         {content}
+                        <NavPending />
                       </Link>
                     ) : (
                       <span

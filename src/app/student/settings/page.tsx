@@ -29,7 +29,22 @@ export default async function StudentSettingsPage() {
               <CardTitle>Profile</CardTitle>
               <CardDescription>Only your display name is editable here.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-5">
+              <div className="flex items-center gap-4">
+                <span className="grid size-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-secondary font-heading text-xl font-extrabold text-white shadow-lg">
+                  {profile.fullName
+                    .split(" ")
+                    .map((part) => part[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate font-heading font-bold">{profile.fullName}</p>
+                  <p className="truncate text-sm text-muted">{profile.email}</p>
+                  <Badge variant="info" className="mt-1.5">{profile.role}</Badge>
+                </div>
+              </div>
               <ProfileForm initialName={profile.fullName} />
             </CardContent>
           </Card>

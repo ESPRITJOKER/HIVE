@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { HOME_PATH, type Permission, hasPermission } from "./roles";
@@ -16,7 +17,7 @@ export interface SessionContext {
  * Resolves the current user from the database-backed profile.
  * Role is read from the `users` table — never from client-supplied metadata.
  */
-export async function getSessionContext(): Promise<SessionContext | null> {
+export const getSessionContext = cache(async function getSessionContext(): Promise<SessionContext | null> {
   const supabase = await getServerSupabase();
   if (!supabase) return null;
 
@@ -50,7 +51,7 @@ export async function getSessionContext(): Promise<SessionContext | null> {
     classIds: memberships.data?.map((m) => m.class_id) ?? [],
     assignedClassIds: assignments.data?.map((a) => a.class_id) ?? [],
   };
-}
+});
 
 /** Server-side route guard. Redirects unauthenticated or wrong-role users. */
 export async function requireRole(allowed: readonly Role[]): Promise<SessionContext> {

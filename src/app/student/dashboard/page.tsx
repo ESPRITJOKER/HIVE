@@ -48,6 +48,26 @@ export default async function StudentDashboardPage() {
             ]}
           />
 
+          <Reveal>
+            <div className="relative flex items-center justify-between gap-4 overflow-hidden rounded-xl bg-gradient-to-br from-primary to-secondary p-5 shadow-lg">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 opacity-60"
+                style={{ background: "radial-gradient(circle at 85% 20%, rgba(255,255,255,0.3), transparent 50%)" }}
+              />
+              <div className="relative">
+                <p className="font-heading text-xl font-extrabold text-white">Collaborate. Excel.</p>
+                <p className="text-sm text-white/85">Join a study group and learn together.</p>
+              </div>
+              <Link
+                href="/student/discussions"
+                className="relative shrink-0 rounded-lg bg-white px-4 py-2 text-sm font-bold text-primary transition-transform hover:scale-105"
+              >
+                Join Now
+              </Link>
+            </div>
+          </Reveal>
+
           <div className="grid gap-4 lg:grid-cols-2">
             <Reveal>
             <Card className="glass card-interactive h-full">
