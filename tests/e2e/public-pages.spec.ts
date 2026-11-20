@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("landing page renders the HIVE identity and calls to action", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Learn together");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/learn together/i);
   await expect(page.getByRole("link", { name: /get started/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /sign in/i }).first()).toBeVisible();
 });

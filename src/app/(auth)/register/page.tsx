@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { KeyRound, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
@@ -43,11 +44,11 @@ export default function RegisterPage() {
 
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         <FormField id="fullName" label="Full name" error={form.formState.errors.fullName?.message} required>
-          <Input id="fullName" autoComplete="name" placeholder="Ada Lovelace" {...form.register("fullName")} />
+          <Input id="fullName" icon={User} autoComplete="name" placeholder="Ada Lovelace" {...form.register("fullName")} />
         </FormField>
 
         <FormField id="email" label="Email address" error={form.formState.errors.email?.message} required>
-          <Input id="email" type="email" autoComplete="email" placeholder="you@university.edu" {...form.register("email")} />
+          <Input id="email" type="email" icon={Mail} autoComplete="email" placeholder="you@university.edu" {...form.register("email")} />
         </FormField>
 
         <FormField
@@ -57,7 +58,7 @@ export default function RegisterPage() {
           hint="Ask your class representative for this code."
           required
         >
-          <Input id="classCode" placeholder="HIVE-DEMO" className="uppercase" {...form.register("classCode")} />
+          <Input id="classCode" icon={KeyRound} placeholder="HIVE-DEMO" className="uppercase" {...form.register("classCode")} />
         </FormField>
 
         <div className="grid gap-4 sm:grid-cols-2">

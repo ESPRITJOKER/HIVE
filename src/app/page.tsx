@@ -1,20 +1,19 @@
 import Link from "next/link";
 import { ArrowRight, GraduationCap, Sparkles, Users } from "lucide-react";
-import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/shared/brand-logo";
+import { AuthMesh } from "@/features/authentication/components/auth-mesh";
 
 export default function LandingPage() {
   return (
     <main className="relative flex min-h-dvh flex-col overflow-hidden">
-      <div className="ambient-glow pointer-events-none absolute inset-x-0 top-0 h-[36rem]" aria-hidden="true" />
+      <AuthMesh />
 
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-6">
-        <div className="flex items-center gap-2.5">
-          <div className="grid size-9 place-items-center rounded-lg bg-primary text-white shadow-md">
-            <GraduationCap className="size-5" aria-hidden="true" />
-          </div>
-          <span className="font-heading text-xl font-extrabold tracking-tight">{APP_NAME}</span>
-        </div>
+      <header className="relative mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-6">
+        <Link href="/" className="w-max">
+          <BrandLogo size="sm" withWordmark animate={false} />
+        </Link>
         <nav className="flex items-center gap-2" aria-label="Main">
           <Button asChild variant="ghost" size="sm">
             <Link href="/login">Sign in</Link>
@@ -25,15 +24,16 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      <section className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center gap-8 px-5 pb-20 pt-12 text-center">
+      <section className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center gap-8 px-5 pb-20 pt-12 text-center">
         <div className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-muted">
           <Sparkles className="size-3.5 text-accent" aria-hidden="true" />
           Your class, your materials, your study assistant
         </div>
 
-        <h1 className="max-w-4xl text-balance text-5xl font-extrabold leading-[1.05] sm:text-6xl lg:text-7xl">
-          {APP_TAGLINE.split(".")[0]}.<br />
-          <span className="text-gradient">Learn together.</span>
+        <h1 className="max-w-4xl text-balance font-heading text-5xl font-extrabold leading-[1.05] sm:text-6xl lg:text-7xl">
+          Learn Together.
+          <br />
+          <span className="text-secondary">Grow Smarter.</span>
         </h1>
 
         <p className="max-w-2xl text-pretty text-base leading-relaxed text-muted sm:text-lg">
@@ -67,7 +67,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-border/60 px-5 py-6 text-center text-xs text-muted">
+      <footer className="relative border-t border-border/60 px-5 py-6 text-center text-xs text-muted">
         {APP_NAME} · Free and open by design · No subscriptions, no ads, no upgrade prompts.
       </footer>
     </main>

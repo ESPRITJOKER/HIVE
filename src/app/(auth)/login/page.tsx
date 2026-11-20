@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Globe } from "lucide-react";
+import { Globe, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
@@ -75,6 +75,7 @@ export default function LoginPage(props: { searchParams: Promise<{ reason?: stri
           <Input
             id="email"
             type="email"
+            icon={Mail}
             autoComplete="email"
             placeholder="you@university.edu"
             aria-invalid={Boolean(form.formState.errors.email)}
