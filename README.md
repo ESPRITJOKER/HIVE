@@ -1,8 +1,8 @@
 # HIVE — Learn Together. Grow Smarter.
 
-HIVE is a secure, zero-cost collaborative academic platform with a grounded AI study assistant, delivered as an installable Progressive Web App. It is being built phase-by-phase with review gates between phases. This repository currently contains **Phase 1 (Foundation)**; feature phases 2–7 are planned but not yet implemented.
+HIVE is a secure, zero-cost collaborative academic platform with a grounded AI study assistant, delivered as an installable Progressive Web App. It is being built phase-by-phase with review gates between phases. This repository contains **Phases 1–3** (Foundation, Collaboration, Representative & Administration); phases 4–7 are planned but not implemented.
 
-> **Version:** 0.1.0 · **Status:** Phase 1 in progress · **Node:** ≥ 20.9 (developed on Node 22)
+> **Version:** 0.1.0 · **Status:** Phase 3 implemented; live database migrated · **Node:** ≥ 20.9 (developed on Node 22)
 
 ---
 
@@ -16,12 +16,13 @@ HIVE is a secure, zero-cost collaborative academic platform with a grounded AI s
 | Supabase typed clients (browser / server / admin) | ✅ | Explicit "not configured" state — **no mock backend** |
 | Auth screens & flows | ✅ | Splash, onboarding, login, register, Google button, forgot/reset password, verify, join class, pending |
 | Route protection & RBAC | ✅ | `src/proxy.ts` refreshes sessions and enforces per-role areas; client permission helpers |
-| SQL schema (19 tables), RLS, triggers/functions | ✅ | Written and reviewed; **not yet applied to a live Supabase project** |
-| Role dashboards | ✅ | Render scoped data via real queries when configured; explicit empty/config states otherwise |
-| Test harness | ✅ | Vitest (16 unit/component tests passing) + Playwright config and public-page E2E specs |
+| SQL schema (21 tables), RLS, triggers/functions | ✅ | Migrations `0001`–`0007` applied to the live Supabase project; production seed data intentionally omitted |
+| Role dashboards | ✅ | Student, representative and administrator areas render scoped data from real queries; explicit empty/config states otherwise |
+| Test harness | ✅ | Vitest (47 tests passing) + Playwright (56 runs across desktop and mobile) |
+| Representative & administration | ✅ | Class-scoped document/timetable/assignment management, moderation, activity, users/classes/audit/settings — all server-enforced |
 | PWA / offline / push / AI | ⛔ | Planned for phases 4–5; not implemented |
 
-**Important:** Without Supabase credentials the app does **not** invent data. Auth and dashboards show an honest "backend not configured" state. Live integration is deferred until an owner supplies keys (decision A2).
+**Important:** Without Supabase credentials the app does **not** invent data — auth and dashboards show an honest "backend not configured" state. The live project uses only owner-supplied public keys; no service-role key is present in the repository.
 
 ---
 
@@ -74,13 +75,13 @@ src/
   types/                   Domain and shared types
   proxy.ts                 Next.js 16 Proxy: session refresh + route protection
 supabase/
-  migrations/              0001 schema · 0002 RLS · 0003 triggers/functions
+  migrations/              0001 schema · 0002 RLS · 0003 triggers/functions · 0004 grants · 0005–0007 phase support
   seed.sql                 Non-secret seed data
   config.toml              Local Supabase config
 tests/
   unit/                    Pure logic tests (RBAC, validation, constants)
   components/              React Testing Library component tests
-  e2e/                     Playwright public-page specs
+  e2e/                     Playwright public, protected-route and Phase 3 staff-route specs
 HIVE_design_phase_1/       Original design assets — preserved unchanged
 ```
 
@@ -107,7 +108,7 @@ Documentation: `PROJECT_AUDIT.md`, `ARCHITECTURE.md`, `IMPLEMENTATION_PLAN.md`, 
 - **A3** Embedding dimension is validated config, default **384** (local multilingual-e5-small); never assume 768.
 - **A4** Phase-gated execution with owner review between phases.
 
-See `IMPLEMENTATION_PLAN.md` for the full phase plan and exit criteria. **Phase 2 begins only after owner approval of Phase 1.**
+See `IMPLEMENTATION_PLAN.md` for the full phase plan and exit criteria. **Each phase ships only after owner review and its exit gates pass.**
 
 ---
 

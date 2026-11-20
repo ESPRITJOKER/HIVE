@@ -36,14 +36,29 @@ The Playwright config starts `npm run dev -- --hostname 127.0.0.1` automatically
 - `tests/unit/phase2-validations.test.ts` — Phase 2 mutation schemas: task completion, message emptiness/size/control-character sanitisation, notification selections, saved-resource toggles, and profile names.
 - `tests/components/button.test.tsx` — accessible label, click handling, disabled state.
 
-**Result at Phase 2 check:** 6 files, 32 tests passing.
+- `tests/unit/phase3-validations.test.ts` — Phase 3 mutation schemas: HTTPS-only document links, upload type/size rejection, timetable time order and day enum, assignment categories, moderation states, class-code normalisation, role enum, and bounded settings.
+- `tests/unit/phase3-authorization.test.ts` — pure class-scope guards: students never manage/moderate, representatives only inside assigned classes, student membership is not write access, administrators have global scope but cannot change their own role, and an unassigned representative gets an empty scope (IDOR guard).
+
+**Result at Phase 3 check:** 8 files, 47 tests passing.
 
 ### Playwright (`tests/e2e/`)
 
 - `public-pages.spec.ts` — landing identity/CTAs, login form fields, protected dashboard redirect, mobile CTA visibility.
 - `student-routes.spec.ts` — all 11 implemented student routes plus both staff areas redirect unauthenticated visitors to the login page.
+- `phase3-routes.spec.ts` — all 13 implemented representative/administrator routes redirect unauthenticated visitors.
 
-**Result at Phase 2 check:** 15 tests passing on both `chromium` and `mobile` projects (30 total runs). Protected-route tests accept either `reason=auth_required` (configured) or `reason=not_configured` (unconfigured).
+**Result at Phase 3 check:** 28 tests passing on both `chromium` and `mobile` projects (56 total runs). Protected-route tests accept either `reason=auth_required` (configured) or `reason=not_configured` (unconfigured).
+
+### Live smoke test (Phase 3)
+
+After applying migrations `0006`–`0007`, throwaway administrator and representative accounts were created through Supabase Auth signup, promoted via SQL, used once over HTTPS/authenticated SSR sessions, and deleted. Verified:
+
+- All six admin routes and all seven rep routes return 200 with their real page content.
+- Cross-role requests redirect to the caller's own home path (admin ↔ representative ↔ student separation).
+- `platform_settings` RLS returns no rows to non-admins; the `platform_setting(text)` definer RPC is callable by any signed-in user without exposing the table.
+- Class-scoped document reads stay empty for class-less smoke accounts.
+
+No smoke credentials, tokens, or service-role keys were written to the repository; temporary local files were removed after the run.
 
 ---
 

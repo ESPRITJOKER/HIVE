@@ -2,7 +2,7 @@
 
 **Legend:** ✅ Completed · 🔄 In progress · ⛔ Blocked · 🐛 Known bug · 📌 Technical debt
 
-_Last updated: 2026-11-20 (end of Phase 2 implementation, pending owner gate)_
+_Last updated: 2026-11-20 (Phase 3 implemented; migrations `0006`–`0007` applied live and verified; pending smoke test + owner gate)_
 
 ---
 
@@ -55,8 +55,25 @@ _Last updated: 2026-11-20 (end of Phase 2 implementation, pending owner gate)_
 - **Live smoke:** temporary student account provisioned and removed; all 11 student pages rendered after real login; all RLS-scoped REST reads returned `200 []` for the class-less student, including the new `saved_resources` policy (no cross-class leakage)
 - **Exit gate:** build ✅; unit/E2E ✅; live read-path RLS ✅; cross-class multi-role RLS matrix ⛔ (needs two classes + student/rep/admin accounts); owner review ⏳
 
-## Phases 3–7 ⬜ NOT STARTED
-- ⬜ Phase 3 — Representative & administration
+## Phase 3 — Representative & administration 🔄 IMPLEMENTED, migration applied, pending smoke test + owner gate
+- ✅ 3.1 Representative dashboard + assigned-class and student overview (`/representative/dashboard`, `/representative/class`)
+- ✅ 3.2 Document management: private storage upload with server-side magic-byte/type/size checks, external HTTPS references, real processing status from `documents`, delete removes both DB row and stored object
+- ✅ 3.3 Course-scoped timetable and assignment/opportunity CRUD; all writes recheck class scope on the server
+- ✅ 3.4 Discussion moderation (hide/show/index) using real `messages` rows and `message_class_id()` scope recheck
+- ✅ 3.5 Real class activity dashboard from `documents`, `messages`, `tasks_events`, `class_members` (no fabricated metrics); shared AI generation remains Phase 4
+- ✅ 3.6 Admin users, classes, membership decisions, representative assignments and role changes with self-change/last-admin guards
+- ✅ 3.7 Admin dashboard aggregates, AI usage monitoring, append-only audit log viewer, DB-backed system setting (`max_upload_mb`) with real runtime effect on uploads
+- ✅ 3.8 Tests: privilege-escalation + cross-class authorization unit suite, Phase 3 Zod suite, E2E protected-route coverage for all new staff routes
+- ✅ `0006_phase3_support.sql`: admin-only `platform_settings` + definer getter, private `documents` bucket and class-scoped storage policies, document-status guard (clients cannot mark indexed), audit triggers for courses/channels/class_members, revoke anon access to `archive_expired_opportunities()`
+- ✅ `0007_revoke_public_function_execute.sql`: corrective migration removing the default `PUBLIC` EXECUTE grant that let `anon` still call `archive_expired_opportunities()`; live grants now limited to `postgres`/`authenticated`
+- ✅ Navigation: only implemented Phase 3 routes enabled; HIVE AI / revision / quizzes remain disabled "Soon"
+- **Verification:** `npm run typecheck` ✅; `npm run lint` ✅ (0 errors, 0 warnings); `npm test` 32 → **47 tests** ✅; `npm run test:e2e` 30 → **56 runs** ✅; `npm run build` ✅ (all new staff routes compiled)
+- **Live DB:** `0006` + `0007` applied via the transaction pooler; verified table/RLS/RPC/bucket/policies/triggers and revocation. No seed data applied.
+- **Live smoke test ✅:** throwaway admin and representative accounts (created by GoTrue signup, promoted via SQL, deleted afterwards) rendered every Phase 3 admin/rep route with 200 and real content; cross-role access redirected to the correct home path; RLS returned empty scoped rows for non-owners and the definer settings RPC stayed callable without exposing the table. No credentials were stored.
+- **Pending:** owner review before push/deploy
+- **Exit gate:** role separation and scope guards unit-tested ✅; sensitive writes audited ✅; cross-class multi-role RLS matrix with seeded data ⛔ (Phase 6); owner review ⏳
+
+## Phases 4–7 ⬜ NOT STARTED
 - ⬜ Phase 4 — HIVE AI (RAG, citations, quotas, fallback)
 - ⬜ Phase 5 — PWA & offline
 - ⬜ Phase 6 — Security & optimisation (full test matrix)
@@ -69,8 +86,9 @@ _Last updated: 2026-11-20 (end of Phase 2 implementation, pending owner gate)_
 - **TD-001** — CSP uses `'unsafe-inline'`; replace with nonce-based CSP before final delivery (Phase 6).
 - PNG concept boards could not be visually inspected by this model; textual README used as design source of truth.
 - Attached specification PDF could not be read; pasted spec text used as source of truth.
-- Supabase URL + publishable key are configured locally and on Vercel; no service-role secret, AI provider keys, or VAPID keys have been supplied — PWA/AI features deferred.
-- `src/lib/supabase/database.types.ts` is hand-authored (now includes `saved_resources` and `tasks_events.archived_at`); generate types from the live schema in a later phase to avoid drift.
+- Supabase URL + publishable key are configured locally and on Vercel; no service-role secret, AI provider keys, or VAPID keys have been supplied — administration cannot invite/create Auth users (role updates work), and PWA/AI features remain deferred. Admin user provisioning still requires a one-off Auth-admin operation.
+- `src/lib/supabase/database.types.ts` is hand-authored (now includes `saved_resources`, `tasks_events.archived_at`, `platform_settings` and the new RPC signatures); generate types from the live schema in a later phase to avoid drift.
+- Storage monitoring and AI-provider settings are intentionally **not** exposed: there is no storage-size column and no configured provider, so those controls would be decorative.
 - Cross-class multi-role RLS matrix and per-student task-isolation write tests still require seeded academic data and representative/student accounts (Phase 6).
 - E2E suite requires `npx playwright install chromium` once per machine (installed and verified here).
 

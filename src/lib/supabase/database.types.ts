@@ -439,6 +439,26 @@ export interface Database {
         Update: never;
         Relationships: Relationships;
       };
+      platform_settings: {
+        Row: {
+          id: string;
+          key: string;
+          value: Json;
+          description: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          key: string;
+          value: Json;
+          description?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: { value?: Json; description?: string | null; updated_by?: string | null };
+        Relationships: Relationships;
+      };
       notifications: {
         Row: {
           id: string;
@@ -471,6 +491,12 @@ export interface Database {
       is_admin: { Args: Record<string, never>; Returns: boolean };
       is_representative_of: { Args: { target_class_id: string }; Returns: boolean };
       can_access_class: { Args: { target_class_id: string }; Returns: boolean };
+      course_class_id: { Args: { target_course_id: string }; Returns: string | null };
+      message_class_id: { Args: { target_message_id: string }; Returns: string | null };
+      storage_object_class_id: { Args: { p_path: string }; Returns: string | null };
+      can_access_storage_path: { Args: { p_path: string }; Returns: boolean };
+      can_manage_storage_path: { Args: { p_path: string }; Returns: boolean };
+      platform_setting: { Args: { p_key: string }; Returns: Json | null };
       join_class: { Args: { p_code: string }; Returns: string };
       increment_ai_usage: { Args: { p_limit?: number }; Returns: boolean };
       archive_expired_opportunities: { Args: Record<string, never>; Returns: number };
