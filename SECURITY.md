@@ -8,9 +8,9 @@ This document records the **current implementation status** of the controls desi
 
 | Layer | Implemented in | Status |
 |---|---|---|
-| Database (primary) | `supabase/migrations/0002_rls_policies.sql`, `0003_triggers_and_functions.sql`, `0004_role_grants.sql` | ✅ Written and applied to the live project: RLS on all sensitive tables, 40 `authenticated`-scoped policies, role-self-change guard, append-only audit trigger, explicit API-role grants. ⛔ Not yet exercised with multi-role test accounts. |
-| Server (secondary) | `src/proxy.ts`, `src/lib/supabase/server.ts`, `src/lib/permissions/*`, `src/lib/validations/*` | ✅ Session refresh + route protection; role resolved from the `users` table (not client claims); Zod validation; consistent API responses. |
-| Client (UX only) | `src/components/layout/*`, role dashboards | ✅ Role-based nav and dashboards; roadmap controls disabled with "Soon" labels. Explicitly **not** a security boundary. |
+| Database (primary) | `supabase/migrations/0002_rls_policies.sql`, `0003_triggers_and_functions.sql`, `0004_role_grants.sql`, `0005_phase2_support.sql` | ✅ Applied to the live project: RLS on all sensitive tables, 40 `authenticated`-scoped policies (+3 for `saved_resources`), role-self-change guard, append-only audit trigger, explicit API-role grants, realtime limited to `messages`. ⛔ Not yet exercised with a multi-role cross-class matrix. |
+| Server (secondary) | `src/proxy.ts`, `src/lib/supabase/server.ts`, `src/lib/permissions/*`, `src/lib/validations/*`, `src/features/*/actions/*`, `src/features/shared/scope.ts` | ✅ Session refresh + route protection; role resolved from the `users` table (not client claims); every Phase 2 mutation re-authenticates, validates with Zod, re-checks class scope server-side, and revalidates; consistent API responses. |
+| Client (UX only) | `src/components/layout/*`, student screens and dashboards | ✅ Role-based nav and dashboards; roadmap controls disabled with "Soon" labels. Explicitly **not** a security boundary. |
 
 ---
 
@@ -25,7 +25,10 @@ This document records the **current implementation status** of the controls desi
 - **Role self-change blocked at DB.** `prevent_role_self_change()` trigger in migration 0003.
 - **Append-only audit log.** `write_audit_log()` + `prevent_audit_mutation()` triggers; audit reads are an admin-only permission.
 - **AI anti-hallucination contract locked by test.** `INSUFFICIENT_CONTEXT_MESSAGE` is enforced verbatim and quoted by `tests/unit/security.test.ts`; zero-cost default quota is 20/day.
-- **Upload allow-list.** Extension/MIME/size constants are locked by tests; magic-byte verification is a documented Phase 2/6 requirement (not yet implemented).
+- **Upload allow-list.** Extension/MIME/size constants are locked by tests; magic-byte verification is a documented Phase 6 requirement (not yet implemented).
+- **Phase 2 read-path isolation verified live.** A temporary class-less student account authenticated successfully and every class-scoped REST read (including the new `saved_resources` table) returned `200 []`. The account was deleted after the check. All 11 student pages also rendered through a real browser login with honest empty states, not fabricated data.
+- **Phase 2 mutation boundary.** Server Actions call `requireRole(["student"])` themselves — a direct action call from another role is redirected/denied even if a UI control were bypassed. `toggleTaskCompletionAction`, `postMessageAction`, `setNotificationsReadAction`, `setDocumentSavedAction`, and `updateProfileAction` all validate input and re-check scope; discussion authors and task-completion user ids are derived from the session, never from client payloads.
+- **XSS-safe rendering.** Untrusted document/message/notification text is rendered as React text nodes (no `dangerouslySetInnerHTML`); document preview uses a short-lived signed URL inside an iframe, and external links use `rel="noopener noreferrer"`.
 - **Headers.** `next.config.ts` sets security headers including CSP. ⛔ **TD-001:** CSP currently uses `'unsafe-inline'`; nonce-based CSP is pending.
 
 ---
@@ -34,9 +37,9 @@ This document records the **current implementation status** of the controls desi
 
 | Item | Phase | Notes |
 |---|---|---|
-| Apply migrations + multi-role RLS bypass tests on scratch project | 1 (when keys) / 6 | No cross-class reads/writes must be provable |
-| Magic-byte upload validation, private bucket, safe viewer | 2 / 3 / 6 | Extension+MIME allow-list exists; byte checks pending |
-| XSS-safe rendering of untrusted doc/discussion text | 2 | No raw HTML from untrusted input |
+| Multi-role RLS matrix across two seeded classes | 6 | Single-role live RLS + class-less student read path verified; cross-class reads/writes with student/rep/admin accounts still to be proven |
+| Magic-byte upload validation, private bucket, safe viewer | 3 / 6 | Extension+MIME allow-list exists; Phase 2 viewer uses signed URLs; byte checks pending |
+| XSS-safe rendering of untrusted doc/discussion text | 2 ✅ | React text nodes only; no raw HTML; iframe + `noopener noreferrer` |
 | AI provider abstraction with no paid fallback; citation integrity | 4 | Retrieval-scoped, real citations, fixed refusal |
 | PWA per-user cache partition + clear on logout | 5 | Prevents shared-device leakage |
 | Secret scan of built bundles, security headers review, Lighthouse | 6 | Includes replacing CSP `'unsafe-inline'` (TD-001) |

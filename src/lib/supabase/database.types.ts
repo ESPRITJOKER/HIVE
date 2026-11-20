@@ -249,6 +249,7 @@ export interface Database {
           due_date: string | null;
           category: TaskEventCategory;
           attachment: string | null;
+          archived_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -259,6 +260,7 @@ export interface Database {
           due_date?: string | null;
           category: TaskEventCategory;
           attachment?: string | null;
+          archived_at?: string | null;
           created_at?: string;
         };
         Update: {
@@ -267,6 +269,7 @@ export interface Database {
           due_date?: string | null;
           category?: TaskEventCategory;
           attachment?: string | null;
+          archived_at?: string | null;
         };
         Relationships: Relationships;
       };
@@ -415,6 +418,22 @@ export interface Database {
           resource_type: string;
           resource_id?: string | null;
           metadata?: Json;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: Relationships;
+      };
+      saved_resources: {
+        Row: {
+          id: string;
+          user_id: string;
+          document_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          document_id: string;
           created_at?: string;
         };
         Update: never;

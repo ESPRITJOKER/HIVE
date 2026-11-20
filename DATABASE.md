@@ -14,6 +14,7 @@ Located in `supabase/migrations/`, applied in filename order:
 | `0002_rls_policies.sql` | Enables RLS on every sensitive table and defines role/class-scoped policies plus security-definer helper functions used by policies. |
 | `0003_triggers_and_functions.sql` | New-user bootstrap, role-self-change guard, append-only audit log, `updated_at` maintenance, `join_class`, `increment_ai_usage`, `archive_expired_opportunities`. |
 | `0004_role_grants.sql` | Table/sequence/function privileges for `anon` and `authenticated` plus default privileges for future tables. RLS remains the authorization boundary; all 40 policies target `authenticated` only. |
+| `0005_phase2_support.sql` | Phase 2 support: `saved_resources` table with per-user SELECT/INSERT/DELETE RLS (insert additionally requires access to the document's class), plus `messages` added to the `supabase_realtime` publication. |
 
 `supabase/seed.sql` contains non-secret seed data for local/scratch environments. `supabase/config.toml` holds local Supabase CLI settings.
 
@@ -34,14 +35,14 @@ The migrations are written to be re-runnable on a fresh scratch database (enum c
 
 ---
 
-## 2. Entity model (19 tables)
+## 2. Entity model (20 tables)
 
 Grouped by concern:
 
 - **Identity & organisation:** `users` (1:1 with `auth.users`, role field), `classes`, `class_members` (membership status), `representative_assignments` (rep ↔ class).
 - **Academic content:** `courses`, `documents` (processing status), `document_chunks` (with `halfvec(384)` embedding + content hash), `generated_content` (summaries/quizzes/revision sheets).
 - **Schedule & tasks:** `timetable_slots`, `tasks_events` (assignments, exams, opportunities), `user_task_state` (per-student completion).
-- **Community:** `channels`, `messages`, `push_subscriptions`, `notifications`.
+- **Community:** `channels`, `messages`, `push_subscriptions`, `notifications`, `saved_resources` (per-student document bookmarks, added in Phase 2).
 - **AI:** `ai_usage` (daily quota counter), `ai_conversations`, `ai_messages`.
 - **Governance:** `audit_logs` (append-only).
 
@@ -85,11 +86,12 @@ Decision A3: embeddings default to **384** dimensions using a local multilingual
 
 ---
 
-## 6. Live project status (Phase 1)
+## 6. Live project status (Phase 2)
 
-- Migrations `0001`–`0004` have been applied to the live Supabase project `hsdaclpcjpdmgrqmpspn` (region `eu-west-1`) via `supabase db push`.
+- Migrations `0001`–`0005` have been applied to the live Supabase project `hsdaclpcjpdmgrqmpspn` (region `eu-west-1`) via `supabase db push`.
 - `seed.sql` was **not** applied — it is explicitly marked development-only and must never run against a live project.
 - REST check with the publishable key returns `200 []` for `public.users`: tables are reachable and anonymous reads return no rows because RLS policies are scoped to `authenticated`.
+- Phase 2 live read-path check: a temporary class-less student account was authenticated and all class-scoped reads (`courses`, `documents`, `saved_resources`, `notifications`, `user_task_state`, `channels`, `tasks_events`, `timetable_slots`, `messages`) returned `200 []`. The account was deleted afterwards. This confirms the new `saved_resources` policy works and no cross-class rows leak to a student with no memberships.
 - **Network note:** this project's DB host resolves to IPv6 only. Where IPv6 is unavailable, use the transaction pooler instead:
   `postgresql://postgres.<ref>:<password>@aws-0-eu-west-1.pooler.supabase.com:6543/postgres`
-- Outstanding acceptance item: multi-role RLS tests with real student/rep/admin accounts.
+- Outstanding acceptance item: multi-role RLS matrix with seeded academic data across two classes and real student/rep/admin accounts (Phase 6).

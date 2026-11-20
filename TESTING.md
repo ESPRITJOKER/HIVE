@@ -1,6 +1,6 @@
 # HIVE — Testing
 
-Test strategy: fast unit/component tests with Vitest, browser-level smoke tests with Playwright, and (once credentials exist) database/RLS integration tests against a scratch Supabase project.
+Test strategy: fast unit/component tests with Vitest, browser-level smoke tests with Playwright, and database/RLS integration tests against a scratch Supabase project. Live Supabase credentials are configured; a read-path RLS smoke check was performed in Phase 2, with the full multi-role matrix deferred to Phase 6.
 
 ---
 
@@ -32,18 +32,18 @@ The Playwright config starts `npm run dev -- --hostname 127.0.0.1` automatically
 - `tests/unit/permissions.test.ts` — verifies the permission matrix: students/reps never receive admin permissions; students cannot upload docs, publish timetables, manage assignments, moderate discussions, or generate shared AI content; reps get class powers but not admin powers; null roles deny everything; home paths are distinct.
 - `tests/unit/validations.test.ts` — Zod auth schemas (login, registration with matching passwords, password strength) and common schemas (pagination bounds/coercion, text sanitisation).
 - `tests/unit/security.test.ts` — locks in the zero-cost AI quota (20/day), the exact insufficient-context refusal string, and document upload allow-lists/size limit.
+- `tests/unit/phase2-format.test.ts` — reminder buckets and their exclusive edges, due labels, opportunity visibility (archived/expired), timetable day grouping and time sorting, subject colour stability, labels, and date/time formatting.
+- `tests/unit/phase2-validations.test.ts` — Phase 2 mutation schemas: task completion, message emptiness/size/control-character sanitisation, notification selections, saved-resource toggles, and profile names.
 - `tests/components/button.test.tsx` — accessible label, click handling, disabled state.
 
-**Result at Phase 1 check:** 4 files, 16 tests passing.
+**Result at Phase 2 check:** 6 files, 32 tests passing.
 
-### Playwright (`tests/e2e/public-pages.spec.ts`)
+### Playwright (`tests/e2e/`)
 
-- Landing page identity and calls to action.
-- Login page accessible form fields.
-- Protected dashboard redirects unauthenticated visitors to `/login?reason=not_configured`.
-- Mobile viewport keeps the primary call to action visible.
+- `public-pages.spec.ts` — landing identity/CTAs, login form fields, protected dashboard redirect, mobile CTA visibility.
+- `student-routes.spec.ts` — all 11 implemented student routes plus both staff areas redirect unauthenticated visitors to the login page.
 
-**Result at Phase 1 check:** 4 tests passing on both `chromium` and `mobile` projects (8 total runs), both with and without a configured Supabase backend. The protected-route test accepts either `reason=auth_required` (configured) or `reason=not_configured` (unconfigured).
+**Result at Phase 2 check:** 15 tests passing on both `chromium` and `mobile` projects (30 total runs). Protected-route tests accept either `reason=auth_required` (configured) or `reason=not_configured` (unconfigured).
 
 ---
 
@@ -51,8 +51,9 @@ The Playwright config starts `npm run dev -- --hostname 127.0.0.1` automatically
 
 | Area | Why deferred | Phase |
 |---|---|---|
-| Real auth sign-in / Google OAuth | No credentials supplied (decision A2) | 1 (when keys supplied) / 6 |
-| RLS with real student/rep/admin accounts across two classes | Requires a live scratch project | 1 / 6 |
+| Google OAuth | Provider not configured | 6 |
+| RLS matrix with real student/rep/admin accounts across two seeded classes | Requires seeded academic data and representative accounts | 6 |
+| Per-student task-completion isolation and unauthorized write attempts | Requires seeded classes/tasks; read-path already verified live | 6 |
 | Document extraction, chunking, embeddings, citations | Feature not implemented | 4 |
 | Offline/PWA install, cache isolation, push delivery | Feature not implemented | 5 |
 | Lighthouse a11y/perf/PWA, secret scan of built bundles | Final hardening | 6 |

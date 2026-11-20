@@ -2,7 +2,7 @@
 
 **Legend:** ✅ Completed · 🔄 In progress · ⛔ Blocked · 🐛 Known bug · 📌 Technical debt
 
-_Last updated: 2026-11-19 (end of Phase 1 implementation, pending owner gate)_
+_Last updated: 2026-11-20 (end of Phase 2 implementation, pending owner gate)_
 
 ---
 
@@ -36,10 +36,26 @@ _Last updated: 2026-11-19 (end of Phase 1 implementation, pending owner gate)_
 - **Verification:** `npx tsc --noEmit`, `npx eslint .`, `npm run build` clean; `npm test` 4 files / 16 tests passing; `npm run test:e2e` 4 tests passing on both `chromium` and `mobile` (8 runs), configured and unconfigured
 - **Live DB:** ✅ Supabase project `hsdaclpcjpdmgrqmpspn` linked via pooler (`eu-west-1`); migrations `0001`–`0004` applied; seed intentionally not applied (dev-only); REST verified `200 []` with RLS
 - **Admin account:** ✅ `admin@hive.app` created with `administrator` role; password generated locally and delivered to owner only (never stored in repo/env/docs); direct Auth API login + authenticated RLS read + full browser UI login → `/admin/dashboard` all verified
-- **Exit gate:** build passes ✅; auth/RBAC unit + E2E verified ✅; single-role live RLS verified ✅; cross-class multi-role RLS matrix ⛔ (student/rep test accounts not requested); owner review ⏳
+- **Exit gate:** build passes ✅; auth/RBAC unit + E2E verified ✅; single-role live RLS verified ✅; cross-class multi-role RLS matrix ⛔ (student/rep test accounts not requested); owner review ✅ (owner approved continuation 2026-11-20)
 
-## Phases 2–7 ⬜ NOT STARTED
-- ⬜ Phase 2 — Core academic platform (student screens, docs, timetable, assignments, opportunities, discussions, notifications)
+## Phase 2 — Core academic platform ✅ IMPLEMENTED (awaiting owner gate)
+- ✅ 2.1 Server-only scoping helpers (`viewerClassIds`, `getScopedCourseIds`, `canAccessCourse`) + shared DTO format helpers
+- ✅ 2.2 Courses: directory + detail (documents & weekly schedule), search/filter client UI
+- ✅ 2.3 Documents: library + detail viewer with short-lived signed URLs, status badges, bookmarks
+- ✅ 2.4 Timetable: weekly slots grouped by day, coloured per subject
+- ✅ 2.5 Assignments/exams + personal task tracker: server-rendered lists, private per-student completion via Server Actions
+- ✅ 2.6 Opportunities board: category/course filters, archived/expired items hidden automatically
+- ✅ 2.7 Discussions: class channels, realtime `postgres_changes` subscription with reconnect + graceful offline, author derived from session
+- ✅ 2.8 Notifications (read/unread, mark-all), saved resources, profile/settings (display name only)
+- ✅ 2.9 Student dashboard replaced with real aggregated data (courses, deadlines, documents, opportunities, unread count) — no placeholder copy
+- ✅ 2.10 `0005_phase2_support.sql`: `saved_resources` RLS + realtime publication for `messages`; applied to live DB
+- ✅ 2.11 Every mutation re-authenticates (`requireRole`), validates (Zod), re-checks class scope, and revalidates paths
+- ✅ 2.12 Navigation enables only implemented student routes; AI/revision/quizzes stay disabled "Soon"
+- **Verification:** `npx tsc --noEmit` ✅; `npx eslint .` ✅; `npm test` 16 → **32 tests** (new pure-helper + Zod suites) ✅; `npm run test:e2e` 8 → **30 runs** (new protected-route suite) ✅; `npm run build` clean, all 13 student routes compiled ✅
+- **Live smoke:** temporary student account provisioned and removed; all 11 student pages rendered after real login; all RLS-scoped REST reads returned `200 []` for the class-less student, including the new `saved_resources` policy (no cross-class leakage)
+- **Exit gate:** build ✅; unit/E2E ✅; live read-path RLS ✅; cross-class multi-role RLS matrix ⛔ (needs two classes + student/rep/admin accounts); owner review ⏳
+
+## Phases 3–7 ⬜ NOT STARTED
 - ⬜ Phase 3 — Representative & administration
 - ⬜ Phase 4 — HIVE AI (RAG, citations, quotas, fallback)
 - ⬜ Phase 5 — PWA & offline
@@ -47,14 +63,15 @@ _Last updated: 2026-11-19 (end of Phase 1 implementation, pending owner gate)_
 - ⬜ Phase 7 — Final delivery (9 docs, guides, deployment)
 
 ## 🐛 Known bugs
-- None currently observed.
+- None currently observed. (The initial `DiscussionRoom` `isOwn` expression bug was fixed before compilation.)
 
 ## 📌 Technical debt / risks
 - **TD-001** — CSP uses `'unsafe-inline'`; replace with nonce-based CSP before final delivery (Phase 6).
 - PNG concept boards could not be visually inspected by this model; textual README used as design source of truth.
 - Attached specification PDF could not be read; pasted spec text used as source of truth.
-- No Supabase project/keys/VAPID/AI keys supplied — live integration, RLS tests, Playwright browser install in progress, and PWA/AI features deferred.
-- `src/lib/supabase/database.types.ts` is hand-authored; generate types from the live schema in a later phase to avoid drift.
+- Supabase URL + publishable key are configured locally and on Vercel; no service-role secret, AI provider keys, or VAPID keys have been supplied — PWA/AI features deferred.
+- `src/lib/supabase/database.types.ts` is hand-authored (now includes `saved_resources` and `tasks_events.archived_at`); generate types from the live schema in a later phase to avoid drift.
+- Cross-class multi-role RLS matrix and per-student task-isolation write tests still require seeded academic data and representative/student accounts (Phase 6).
 - E2E suite requires `npx playwright install chromium` once per machine (installed and verified here).
 
 ## Preservation note

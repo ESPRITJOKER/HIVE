@@ -1,5 +1,6 @@
 import type { Role } from "@/types/domain";
 import {
+  Bell,
   BookOpen,
   CalendarDays,
   ClipboardList,
@@ -40,17 +41,18 @@ export const NAVIGATION: Record<Role, NavSection[]> = {
       title: "Workspace",
       items: [
         item("Dashboard", "/student/dashboard", LayoutDashboard, true),
-        item("Courses", "/student/courses", BookOpen),
-        item("Documents", "/student/documents", FileText),
-        item("Timetable", "/student/timetable", CalendarDays),
-        item("Assignments", "/student/assignments", ClipboardList),
-        item("Opportunities", "/student/opportunities", Trophy),
+        item("Courses", "/student/courses", BookOpen, true),
+        item("Documents", "/student/documents", FileText, true),
+        item("Timetable", "/student/timetable", CalendarDays, true),
+        item("Assignments", "/student/assignments", ClipboardList, true),
+        item("My tasks", "/student/tasks", ClipboardList, true),
+        item("Opportunities", "/student/opportunities", Trophy, true),
       ],
     },
     {
       title: "Learn",
       items: [
-        item("Discussions", "/student/discussions", MessageSquare),
+        item("Discussions", "/student/discussions", MessageSquare, true),
         item("HIVE AI", "/student/ai", Sparkles),
         item("Revision sheets", "/student/revision", GraduationCap),
         item("Quizzes", "/student/quizzes", ClipboardList),
@@ -59,8 +61,9 @@ export const NAVIGATION: Record<Role, NavSection[]> = {
     {
       title: "Account",
       items: [
-        item("Saved resources", "/student/saved", FileText),
-        item("Settings", "/student/settings", Settings),
+        item("Notifications", "/student/notifications", Bell, true),
+        item("Saved resources", "/student/saved", FileText, true),
+        item("Settings", "/student/settings", Settings, true),
       ],
     },
   ],
